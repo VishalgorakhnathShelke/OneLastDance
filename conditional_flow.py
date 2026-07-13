@@ -35,6 +35,7 @@ SEARCH_RESULTS = 4
 # Gemini is used for both routing and final answer generation.
 LLM_MODEL_NAME = "gemini-2.5-flash"
 LLM_TEMPERATURE = 0.4
+EXIT_COMMANDS = {"exit", "quit"}
 
 QueryType = Literal["design", "project", "general"]
 
@@ -190,6 +191,16 @@ def build_rag_prompt(query: str, project_topic: str, context: str) -> str:
         f"Question: {query}\n\n"
         "Provide a clear, authoritative, friendly, and actionable answer."
     )
+
+
+def is_exit_command(user_query: str) -> bool:
+    """Return True when the student wants to stop the terminal chat."""
+    return user_query.strip().lower() in EXIT_COMMANDS
+
+
+def print_assistant_reply(reply: str) -> None:
+    """Print the assistant answer with a divider between turns."""
+    print(f"\nAssistant: {reply}\n" + "-" * 40)
 
 
 # =========================================================
@@ -362,7 +373,7 @@ def run_terminal_chat(app) -> None:
     while True:
         user_query = input("You: ")
 
-        if user_query.lower() in ["exit", "quit"]:
+        if is_exit_command(user_query):
             print("Good luck with your COMP9727 project!")
             break
 
@@ -373,7 +384,7 @@ def run_terminal_chat(app) -> None:
             }
         )
 
-        print(f"\nAssistant: {result['messages'][-1].content}\n" + "-" * 40)
+        print_assistant_reply(result["messages"][-1].content)
 
 
 def main() -> None:
