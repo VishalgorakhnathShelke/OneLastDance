@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Annotated, Literal, TypedDict
 
 from dotenv import load_dotenv
@@ -111,8 +112,21 @@ def build_retriever(pdf_path: str, embeddings: HuggingFaceEmbeddings):
     return vectorstore.as_retriever(search_kwargs={"k": SEARCH_RESULTS})
 
 
+def validate_pdf_file(pdf_path: str) -> None:
+    """Fail early with a readable message if a required source PDF is missing."""
+    if not Path(pdf_path).is_file():
+        raise FileNotFoundError(
+            f"Required PDF not found: {pdf_path}. "
+            "Place the file in the repository root or update the PDF path "
+            "constant at the top of conditional_flow.py."
+        )
+
+
 def build_course_retrievers(embeddings: HuggingFaceEmbeddings) -> tuple:
     """Build both PDF retrievers used by the conditional graph."""
+    validate_pdf_file(DESIGN_PDF_PATH)
+    validate_pdf_file(PROJECT_PDF_PATH)
+
     design_retriever = build_retriever(DESIGN_PDF_PATH, embeddings)
     project_retriever = build_retriever(PROJECT_PDF_PATH, embeddings)
     return design_retriever, project_retriever
