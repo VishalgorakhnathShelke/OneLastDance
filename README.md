@@ -68,7 +68,13 @@ Install dependencies:
 pip install -r requirement.txt
 ```
 
-Create a `.env` file in the repository root:
+Create a `.env` file in the repository root. You can start from the template:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Then replace the placeholder values:
 
 ```env
 GOOGLE_API_KEY=your_google_api_key
@@ -79,6 +85,16 @@ TAVILY_API_KEY=your_tavily_api_key
 Only the keys used by the script you are running are required. For example,
 `conditional_flow.py` needs the Google key, while `iterative_tools.py` may also
 need Tavily and Groq keys.
+
+## Example Questions For `conditional_flow.py`
+
+Try questions like:
+
+- What should be included in our project design proposal?
+- What are the final report expectations?
+- How should we describe evaluation metrics for a movie recommender?
+- Are there any plagiarism or submission rules we should remember?
+- Hello, can you help us plan our recommender project?
 
 ## Running The Scripts
 
@@ -98,6 +114,21 @@ Run the iterative writer-reviewer workflow:
 
 ```powershell
 python iterative_tools.py
+```
+
+## Troubleshooting
+
+If `conditional_flow.py` reports that a PDF is missing, confirm that
+`project-design.pdf` and `project.pdf` exist in the repository root. These files
+are ignored by git because they may be course materials or large local files.
+
+If Gemini authentication fails, check that `.env` contains `GOOGLE_API_KEY` and
+that the virtual environment is activated before running the script.
+
+If dependency installation fails, upgrade pip first:
+
+```powershell
+python -m pip install --upgrade pip
 ```
 
 ## Development Notes
